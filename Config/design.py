@@ -18,10 +18,11 @@ def banner():
 
     # Credits
     print(Fore.LIGHTMAGENTA_EX + "By: Lavender-exe" + Style.RESET_ALL)
+    print(Fore.LIGHTMAGENTA_EX + "GNU General Public License v3.0" + Style.RESET_ALL)
     print(Fore.LIGHTGREEN_EX + '''
-Credits: "Joe Helle"
+Credits: Joe Helle
 https://ko-fi.com/s/0c3776a2a0
-              ''' + Style.RESET_ALL)
+    ''' + Style.RESET_ALL)
     print(Fore.LIGHTRED_EX + "".center(80, "=") + Style.RESET_ALL)
     print("")
 

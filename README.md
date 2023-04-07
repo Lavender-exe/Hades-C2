@@ -27,7 +27,7 @@ pip install -r requirements.txt
 
 ## Usage
 ### Server:
-1. Run the server using `python server.py`
+1. Run the server using `python hades-c2.py`
 2. Run `listeners -g / --generate` to generate a listener
 3. Select the IP and Port for the listener
 
