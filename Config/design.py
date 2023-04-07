@@ -2,13 +2,14 @@ from colorama import *
 import sys
 import pyfiglet
 import os
+from Config import colours
 
 def banner():
     # Clear Screen
     os.system("cls||clear")
 
     # Add seperator
-    print(Fore.LIGHTRED_EX + "".center(80, "=") + Style.RESET_ALL)
+    colours.seperator()
 
     # Server Banner
     print(Fore.LIGHTYELLOW_EX + Style.BRIGHT)
@@ -18,8 +19,8 @@ def banner():
     # Credits
     print(Fore.LIGHTMAGENTA_EX + "By: Lavender-exe" + Style.RESET_ALL)
     print(Fore.LIGHTGREEN_EX + '''
-    Credits: "Joe Helle"
-    https://ko-fi.com/s/0c3776a2a0
+Credits: "Joe Helle"
+https://ko-fi.com/s/0c3776a2a0
               ''' + Style.RESET_ALL)
     print(Fore.LIGHTRED_EX + "".center(80, "=") + Style.RESET_ALL)
     print("")
@@ -51,13 +52,6 @@ def help():
     sessions -i --interact            --> Interact with Session
     sessions -k --kill <value>        --> Kill Active Session
 
-    Client Commands
-    ---------------------------------------------------------------------------------------
-
-    persist / pt                      --> Persist Payload (After Interacting with Session) 
-    background / bg                   --> Background Session
-    exit                              --> Kill Client Connection
-
     Payload Commands
     ---------------------------------------------------------------------------------------
 
@@ -66,12 +60,19 @@ def help():
     linplant.py                       --> Linux Implant
     pshell_shell                      --> Powershell Implant
 
+    Client Commands
+    ---------------------------------------------------------------------------------------
+
+    persist / pt                      --> Persist Payload (After Interacting with Session) 
+    background / bg                   --> Background Session
+    exit                              --> Kill Client Connection
+
     Misc Commands
     ---------------------------------------------------------------------------------------
 
     help / h                          --> Show Help Menu
-        """ + Style.RESET_ALL)
+""" + Style.RESET_ALL)
 
     # Seperator
-    print(Fore.LIGHTRED_EX + "".center(80, "=") + Style.RESET_ALL)
+    colours.seperator()
     print("")

@@ -346,6 +346,10 @@ if __name__ == "__main__":
     # Target List Store
     targets = []
     banner()
+    # Create Payloads Directory
+    if not os.path.exists('Generated Payloads'):
+        info("Creating Generated Payloads Directory...")
+        os.mkdir('Generated Payloads')
 
     # Count Variables
     kill_flag = 0
@@ -463,6 +467,9 @@ if __name__ == "__main__":
                 quit_message = input(
                     Fore.LIGHTRED_EX + "\n[!] Are you sure you want to quit? (yes/no): " + Style.RESET_ALL).lower()
                 if quit_message == 'y' or quit_message == 'yes':
+                    # Delete Payloads
+                    info("Deleting Payloads")
+                    shutil.rmtree('Generated Payloads')
                     tar_length = len(targets)
                     for target in targets:
                         if target[7] == 'Dead':
@@ -480,6 +487,9 @@ if __name__ == "__main__":
                 Fore.LIGHTRED_EX + "\n[!] Are you sure you want to quit? (yes/no): " + Style.RESET_ALL).lower()
             if quit_message == 'y' or quit_message == 'yes':
                 tar_length = len(targets)
+                # Delete Payloads
+                info("Deleting Payloads")
+                shutil.rmtree('Generated Payloads')
                 for target in targets:
                     if target[7] == 'Dead':
                         pass

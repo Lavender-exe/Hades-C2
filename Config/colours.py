@@ -1,8 +1,5 @@
 from colorama import *
-import sys
-import os
 
-# Status Colours
 def success(function):
     print (Fore.GREEN + "[+] " + function + Style.RESET_ALL)
 
@@ -12,7 +9,8 @@ def error(function):
 def info(function):
     print (Fore.BLUE + "[i] " + function + Style.RESET_ALL)
 
-# Server Colours
-
 def quit(function):
     print (Fore.LIGHTRED_EX + function + Style.RESET_ALL)
+
+def seperator():
+    print (Fore.LIGHTRED_EX + "".center(80, "=") + Style.RESET_ALL)
