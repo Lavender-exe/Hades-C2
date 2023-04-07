@@ -1,6 +1,6 @@
 # Hades-C2
 
-Hades is a basic Command & Control framework built using Python. It is currently _extremely_ barebones, but I plan to add more features soon.
+Hades is a basic Command & Control framework built using Python. It is currently _extremely_ bare bones, but I plan to add more features soon.
 
 **Server tested on Windows**
 
@@ -14,7 +14,7 @@ Hades is a basic Command & Control framework built using Python. It is currently
   - CMD Commands
   - BASH Commands
 - [x] Basic Persistence
-  - Linux Cronjobs
+  - Linux Cronjob
   - Windows Registry Autorun
 
 ## Installation
@@ -28,6 +28,41 @@ pip install -r requirements.txt
 ```
 
 ## Usage
+
+### Help:
+```bash
+Listener Commands
+---------------------------------------------------------------------------------------
+
+listeners -g --generate           --> Generate Listener
+
+Session Commands
+---------------------------------------------------------------------------------------
+
+sessions -l --list                --> List Sessions
+sessions -i --interact            --> Interact with Session
+sessions -k --kill <value>        --> Kill Active Session
+
+Payload Commands
+---------------------------------------------------------------------------------------
+
+winplant.py                       --> Windows Python Implant
+exeplant.py                       --> Windows Executable Implant
+linplant.py                       --> Linux Implant
+pshell_shell                      --> Powershell Implant
+
+Client Commands
+---------------------------------------------------------------------------------------
+
+persist / pt                      --> Persist Payload (After Interacting with Session) 
+background / bg                   --> Background Session
+exit                              --> Kill Client Connection
+
+Misc Commands
+---------------------------------------------------------------------------------------
+
+help / h                          --> Show Help Menu
+```
 ### Server:
 1. Run the server using `python hades-c2.py`
 2. Run `listeners -g / --generate` to generate a listener
