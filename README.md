@@ -2,6 +2,8 @@
 
 Hades is a basic Command & Control framework built using Python. It is currently _extremely_ barebones, but I plan to add more features soon.
 
+**Server tested on Windows**
+
 ## Features
 - [x] Windows Implant
   - Python Implant
@@ -41,3 +43,5 @@ pip install -r requirements.txt
 - [ ] Add more command functionality
 - [ ] Use Nim/C++ to create cross-platform malware
 - [ ] Add more Quality of Life features
+- [ ] Flask Web Interface
+- [ ] Add more Implant types
