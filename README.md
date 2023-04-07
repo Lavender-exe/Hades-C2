@@ -18,7 +18,12 @@ Hades is a basic Command & Control framework built using Python. It is currently
 ## Installation
 1. Clone the repository
 2. Install the requirements using `pip install -r requirements.txt`
-3. Run the server using `python server.py`
+
+```bash
+git clone https://github.com/lavender-exe/Hades-C2.git
+cd Hades-C2
+pip install -r requirements.txt
+```
 
 ## Usage
 ### Server:
@@ -34,5 +39,5 @@ Hades is a basic Command & Control framework built using Python. It is currently
 
 - [ ] Add more persistence methods
 - [ ] Add more command functionality
-- [ ] Use Nim to create cross-platform malware
+- [ ] Use Nim/C++ to create cross-platform malware
 - [ ] Add more Quality of Life features
