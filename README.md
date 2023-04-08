@@ -62,6 +62,7 @@ Misc Commands
 ---------------------------------------------------------------------------------------
 
 help / h                          --> Show Help Menu
+clear / cls                       --> Clear Screen
 ```
 ### Server:
 1. Run the server using `python hades-c2.py`

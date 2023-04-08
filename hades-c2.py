@@ -11,7 +11,6 @@ import time
 from datetime import datetime
 from prettytable import PrettyTable
 from Config.design import *
-from Config.colours import *
 from Config.commands import *
 
 
