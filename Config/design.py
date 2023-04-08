@@ -1,5 +1,5 @@
 from colorama import *
-import sleep
+from time import sleep
 import pyfiglet
 import os
 from Config import colours
