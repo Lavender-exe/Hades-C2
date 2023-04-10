@@ -1,8 +1,9 @@
 # Hades-C2
 
-Hades is a basic Command & Control framework built using Python. It is currently _extremely_ bare bones, but I plan to add more features soon.
+Hades is a basic Command & Control framework built using Python. It is currently _extremely_ bare bones, but I plan to
+add more features soon.
 
-**Server tested on Windows**
+**Server tested on Windows - expect bugs**
 
 ## Features
 - [x] Windows Implant
@@ -24,7 +25,10 @@ Hades is a basic Command & Control framework built using Python. It is currently
 ```bash
 git clone https://github.com/lavender-exe/Hades-C2.git
 cd Hades-C2
-pip install -r requirements.txt
+# Windows
+python install.py
+# Linux
+python3 install.py
 ```
 
 ## Usage
@@ -75,9 +79,9 @@ clear / cls                       --> Clear Screen
 
 ## Future Plans
 
+- [ ] Better Implant Functions
 - [ ] Add more persistence methods
 - [ ] Add more command functionality
 - [ ] Use Nim/C++ to create cross-platform malware
 - [ ] Add more Quality of Life features
 - [ ] Flask Web Interface
-- [ ] Add more Implant types
