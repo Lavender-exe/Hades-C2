@@ -2,7 +2,8 @@
 
 Hades is a basic Command & Control framework built using Python. It is currently _extremely_ bare bones, but I plan to add more features soon.
 
-**Server tested on Windows**
+**Server tested on Windows - Currently working on an overhaul and remake of the server**
+
 **⚠️ Expect bugs**
 
 ## Features
