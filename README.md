@@ -1,9 +1,11 @@
 # Hades-C2
 
-Hades is a basic Command & Control framework built using Python. It is currently _extremely_ bare bones, but I plan to
+Hades is a basic Command & Control server built using Python. It is currently _extremely_ bare bones, but I plan to
 add more features soon.
 
-**Server tested on Windows - expect bugs**
+**Server tested on Windows** 
+
+**⚠ Expect bugs ⚠**
 
 ## Features
 - [x] Windows Implant

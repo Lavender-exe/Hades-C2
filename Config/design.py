@@ -1,13 +1,13 @@
 from colorama import *
 from time import sleep
 import pyfiglet
-import os
-from Config import colours
+
+from Config.commands import *
 
 
 def banner():
     # Update Repo
-    colours.process("Updating Repository")
+    process("Updating Repository")
     os.system("git pull")
     sleep(1)
 
@@ -15,7 +15,7 @@ def banner():
     os.system("cls||clear")
 
     # Add seperator
-    colours.seperator()
+    seperator()
 
     # Server Banner
     print(Fore.LIGHTYELLOW_EX + Style.BRIGHT)
@@ -29,6 +29,11 @@ def banner():
 Credits: Joe Helle
 https://ko-fi.com/s/0c3776a2a0
     ''' + Style.RESET_ALL)
-    print(Fore.LIGHTRED_EX + "".center(80, "=") + Style.RESET_ALL)
+    seperator()
+    if not os.path.exists('Generated Payloads'):
+        process("Creating Generated Payloads Directory...")
+        os.mkdir('Generated Payloads')
+        success("Generated Payloads Directory Created")
+    seperator()
     print("")
 

