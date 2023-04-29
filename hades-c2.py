@@ -403,7 +403,7 @@ if __name__ == "__main__":
 
     while True:
         try:
-            command = input(Fore.LIGHTMAGENTA_EX + f"Charon@{host_ip}$ " + Style.RESET_ALL)
+            command = input(Fore.LIGHTMAGENTA_EX + f"Charon@{host_ip}$ " + Style.RESET_ALL).strip()
 
             match command:
                 case ('help' | 'h'):
