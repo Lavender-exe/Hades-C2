@@ -84,7 +84,6 @@ clear / cls                       --> Clear Screen
 ### Prerequisites
 
 - Python3 Pip
-- Flask
 - Colorama
 
 ### Installation
