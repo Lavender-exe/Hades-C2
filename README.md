@@ -27,7 +27,7 @@ Features are a work in progress currently.</p>
 
 This is a project made (mostly) for me to learn Malware Development, Sockets, and C2 infrastructure setups. Currently, the server can be used for CTFs but it is still a buggy mess with a lot of things that need ironed out.
 
-I am working on a Web UI using Flask currently so new features are being put on hold until then, if you face any issues then please be sure to create an issues request.
+I am working on a User Interface currently so new features are being put on hold until then, if you face any issues then please be sure to create an issues request.
 
 ### Features
 - [x] Windows Implant
@@ -84,8 +84,7 @@ clear / cls                       --> Clear Screen
 ### Prerequisites
 
 - Python3 Pip
-- Flask
-- Colorama
+- requirements.txt
 
 ### Installation
 
@@ -135,16 +134,14 @@ Contributions are what make the open source community such an amazing place to b
 - [ ] Add more command functionality
 - [ ] Use Nim/C++ to create cross-platform malware
 - [ ] Add more Quality of Life features
-- [ ] Flask Web Interface
+- [ ] User Interface
 
 ## License
 
 Distributed under the MIT License. See [LICENSE](https://github.com/Lavender-exe/Hades-C2/blob/main/LICENSE.md) for more information.
 
-## Authors
-
-* **Lavender** - *Nerd* - [Lavender](https://github.com/Lavender-exe/) - *Created Project*
-
 ## Acknowledgements
 
 * [Joe Helle](https://twitter.com/joehelle?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor)
+* [DaStoopidGuy](https://github.com/DaStoopidGuy)
+
