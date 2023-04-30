@@ -18,7 +18,6 @@ Features are a work in progress currently.</p>
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
 * [License](#license)
-* [Authors](#authors)
 * [Acknowledgements](#acknowledgements)
 
 ## About The Project
