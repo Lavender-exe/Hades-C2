@@ -1,5 +1,5 @@
 import os
-from Config.colours import *
+from config.colours import *
 
 
 def clear():

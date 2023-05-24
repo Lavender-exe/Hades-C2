@@ -2,7 +2,7 @@ from colorama import *
 from time import sleep
 import pyfiglet
 
-from Config.commands import *
+from config.commands import *
 
 
 def banner():
@@ -25,10 +25,6 @@ def banner():
     # Credits
     print(Fore.LIGHTMAGENTA_EX + "By: Lavender-exe" + Style.RESET_ALL)
     print(Fore.LIGHTMAGENTA_EX + "GNU General Public License v3.0" + Style.RESET_ALL)
-    print(Fore.LIGHTGREEN_EX + '''
-Credits: Joe Helle
-https://ko-fi.com/s/0c3776a2a0
-    ''' + Style.RESET_ALL)
     seperator()
     if not os.path.exists('Generated Payloads'):
         process("Creating Generated Payloads Directory...")

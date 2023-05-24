@@ -94,9 +94,9 @@ def jitter():
 if __name__ == "__main__":
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        host_ip = 'INPUT_IP_HERE'
-        host_port = INPUT_PORT_HERE
+        host_ip = '127.0.0.1'
+        host_port = 2222
         session_handler()
-# If the connection fails then wait a rand time
     except ConnectionRefusedError:
         jitter()
+        
