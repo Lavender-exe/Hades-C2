@@ -60,9 +60,9 @@ sessions -k --kill <value>        --> Kill Active Session
 Payload Commands
 ---------------------------------------------------------------------------------------
 
-winplant.py                       --> Windows Python Implant
-exeplant.py                       --> Windows Executable Implant
-linplant.py                       --> Linux Implant
+winpy                             --> Windows Python Implant
+exepy                             --> Windows Executable Implant
+linpy                             --> Linux Implant
 pshell_shell                      --> Powershell Implant
 
 Client Commands
