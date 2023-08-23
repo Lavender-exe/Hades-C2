@@ -227,10 +227,9 @@ def comm_handler():
                                 'Active'                           # Status
                                 ])
 
-                print(
-                    f'{Fore.GREEN}\n[+] Connection Received from {host_name[0]} {remote_ip}\n{Style.RESET_ALL}{Fore.YELLOW}'
-                    + f'{host_name}:{remote_ip}'
-                    + Style.RESET_ALL,
+                console.print(
+                    f'[green]\n[+] Connection Received from {host_name[0]} {remote_ip}\n'
+                    + f'[yellow]{host_name}:{remote_ip}',
                     end='',
                 )
 
@@ -331,12 +330,10 @@ if __name__ == "__main__":
             match command.strip():
                 case ('help' | 'h'):
                     help()
-                case ('update'):
-                    update()
-                case ('update_conf'):
-                    update_config()
+                    
                 case ('clear' | 'cls'):
                     clear()
+                    
                 case ('listeners -g' | 'listeners --generate'):
                     if host_ip == "":
                         try:
@@ -353,8 +350,10 @@ if __name__ == "__main__":
                         set_server_addr(host_ip, host_port)
                         listener_handler()
                         listener_counter += 1
+                        
                 case ('pshell_shell'):
                     pshell_cradle()
+                    
                 case 'winpy':
                     if listener_counter > 0:
                         winpy()
@@ -372,6 +371,7 @@ if __name__ == "__main__":
                         exepy()
                     else:
                         error("Generate Listener First")
+                        
                 case ('exit'):
                     if exit_server() == False:    
                         kill_flag = 1

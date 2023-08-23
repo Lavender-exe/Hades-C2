@@ -77,27 +77,23 @@ Misc Commands
 
 help / h                          --> Show Help Menu
 clear / cls                       --> Clear Screen
+update config                     --> Update Config File (WIP)
+update repo                       --> Update Program
 ```
 
 
 ### Prerequisites
 
 - Python3 Pip
-- OpenSSL
-  - [Installation Manual](https://www.glenndoten.net/windows/windows-server/openssl-tls-cheat-sheet)
-  - [Windows Binaries](https://slproweb.com/products/Win32OpenSSL.html)
-  - [GitHub Repo](https://github.com/openssl/openssl)
 
 ### Installation
 
 ```bash
 git clone https://github.com/lavender-exe/Hades-C2.git
+
 cd Hades-C2
-# Windows
-python install.py
-# Linux
-python3 install.py
-python3 hades-c2.py
+
+pip install -r misc/requirements.txt
 ```
 
 #### Server:
@@ -136,7 +132,7 @@ Contributions are what make the open source community such an amazing place to b
 
 ## License
 
-Distributed under the MIT License. See [LICENSE](https://github.com/Lavender-exe/Hades-C2/LICENSE.md) for more information.
+Distributed under the MIT License. See [LICENSE](https://github.com/Lavender-exe/Hades-C2/misc/LICENSE.md) for more information.
 
 ## Acknowledgements
 
