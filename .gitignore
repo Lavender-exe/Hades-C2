@@ -1,1 +1,5 @@
-Config/__pycache__/
+certs/
+Generated Payloads/
+config/__pycache__/
+*../__pycache__/
+.vscode

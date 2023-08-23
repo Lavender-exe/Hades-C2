@@ -1,3 +1,5 @@
-colorama==0.4.6
-prettytable==3.6.0
-pyfiglet==0.8.post1
+colorama
+prettytable
+pyfiglet
+rich
+pyOpenSSL

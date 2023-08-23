@@ -83,7 +83,10 @@ clear / cls                       --> Clear Screen
 ### Prerequisites
 
 - Python3 Pip
-- requirements.txt
+- OpenSSL
+  - [Installation Manual](https://www.glenndoten.net/windows/windows-server/openssl-tls-cheat-sheet)
+  - [Windows Binaries](https://slproweb.com/products/Win32OpenSSL.html)
+  - [GitHub Repo](https://github.com/openssl/openssl)
 
 ### Installation
 
@@ -102,10 +105,6 @@ python3 hades-c2.py
 2. Run `listeners -g / --generate` to generate a listener
 3. Select the IP and Port for the listener
 
-#### Implant:
-1. Create an implant using `winplant.py`, `linplant.py` or `exeplant.py`
-2. Run the implant on the target machine
-
 ## Roadmap
 
 See the [open issues](https://github.com/Lavender-exe/Hades-C2/issues) for a list of proposed features (and known issues).
@@ -116,7 +115,6 @@ Contributions are what make the open source community such an amazing place to b
 * If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/Lavender-exe/Hades-C2/issues/new) to discuss it, or directly create a pull request after you edit the *README.md* file with necessary changes.
 * Please make sure you check your spelling and grammar.
 * Create individual PR for each suggestion.
-* Please also read through the [Code Of Conduct](https://github.com/Lavender-exe/Hades-C2/blob/main/CODE_OF_CONDUCT.md) before posting your first idea as well.
 
 ### Creating A Pull Request
 
@@ -134,13 +132,12 @@ Contributions are what make the open source community such an amazing place to b
 - [ ] Use Nim/C++ to create cross-platform malware
 - [ ] Add more Quality of Life features
 - [ ] User Interface
+- [x] SSL/TLS Encryption
 
 ## License
 
-Distributed under the MIT License. See [LICENSE](https://github.com/Lavender-exe/Hades-C2/blob/main/LICENSE.md) for more information.
+Distributed under the MIT License. See [LICENSE](https://github.com/Lavender-exe/Hades-C2/LICENSE.md) for more information.
 
 ## Acknowledgements
 
 * [Joe Helle](https://twitter.com/joehelle?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor)
-* [DaStoopidGuy](https://github.com/DaStoopidGuy)
-

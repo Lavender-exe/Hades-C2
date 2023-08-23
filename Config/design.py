@@ -1,35 +1,30 @@
-from colorama import *
-from time import sleep
 import pyfiglet
-
+from colorama import *
 from config.commands import *
-
+from modules.keygen import generate_certificate
 
 def banner():
-    # Update Repo
-    process("Updating Repository")
-    os.system("git pull")
-    sleep(1)
-
-    # Clear Screen
     os.system("cls||clear")
 
-    # Add seperator
-    seperator()
-
     # Server Banner
-    print(Fore.LIGHTYELLOW_EX + Style.BRIGHT)
-    pyfiglet.print_figlet("Hades", font="calgphy2", justify="center")
-    print(Style.RESET_ALL)
-
-    # Credits
-    print(Fore.LIGHTMAGENTA_EX + "By: Lavender-exe" + Style.RESET_ALL)
-    print(Fore.LIGHTMAGENTA_EX + "GNU General Public License v3.0" + Style.RESET_ALL)
+    banner = pyfiglet.print_figlet("Hades", font="calgphy2", justify="center")
+    console.print(banner, style="bold yellow")
+    
+    console.print("By: Lavender-exe", style="medium_purple1")
+    console.print("GNU General Public License v3.0", style="green")
     seperator()
     if not os.path.exists('Generated Payloads'):
         process("Creating Generated Payloads Directory...")
         os.mkdir('Generated Payloads')
         success("Generated Payloads Directory Created")
+    if not os.path.exists('certs'):
+        process("Creating Certificates Directory...")
+        os.mkdir('certs')
+        success("certs Directory Created")
+    if not os.path.exists('certs/key.pem'):
+        generate_certificate()
+    else:
+        success("Config Complete")
     seperator()
     print("")
 

@@ -1,25 +1,28 @@
-from colorama import *
+from rich.style import Style
+from rich.console import Console
 
+console = Console(color_system="auto")
+style = Style()
 
 def success(function):
-    print(Fore.GREEN + "[+] " + function + Style.RESET_ALL)
+    console.print(f"[+] {function}", style="green")
 
 
 def error(function):
-    print(Fore.RED + "[-] " + function + Style.RESET_ALL)
+    console.print(f"[!] {function}", style="red on white")
 
 
 def info(function):
-    print(Fore.BLUE + "[i] " + function + Style.RESET_ALL)
+    console.print(f"[i] {function}", style="blue_violet")
 
 
 def quit(function):
-    print(Fore.LIGHTRED_EX + "[+] " + function + Style.RESET_ALL)
+    console.print(f"[-] {function}", style="red")
 
 
 def process(function):
-    print(Fore.YELLOW + "[*] " + function + Style.RESET_ALL)
+    console.print(f"[*] {function}", style="yellow")
 
 
 def seperator():
-    print(Fore.LIGHTRED_EX + "".center(80, "=") + Style.RESET_ALL)
+    console.print("".center(80, "="), style='medium_violet_red')
