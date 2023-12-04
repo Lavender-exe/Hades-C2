@@ -3,7 +3,7 @@ from rich.console import Console
 from configparser import ConfigParser
 
 config_obj = ConfigParser()
-config_obj.read('config/config.ini')
+config_obj.read('config/server_config.ini')
 database_config = config_obj["DATABASE"]
 
 console = Console()

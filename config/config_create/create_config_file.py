@@ -1,4 +1,7 @@
+import os
 from configparser import ConfigParser
+from config.colours import success,info
+
 
 config_obj = ConfigParser()
 config_obj["DATABASE"] = {
@@ -20,10 +23,12 @@ config_obj["CERTIFICATE"] = {
     "email" : "local@host.com",
 }
 
-config_obj["SERVER"] = {
-    "host_ip" : "",
-    "host_port" : "",
-}
+# Create LOGGING File
 
-with open('config/config.ini', 'w') as conf:
-    config_obj.write(conf)
+config_file_path = 'config/config_files/server_config.ini'
+def create_config():
+    if not os.path.exists(config_file_path):
+        # Write the configuration to the file
+        with open(config_file_path, 'w') as conf:
+            config_obj.write(conf)
+        

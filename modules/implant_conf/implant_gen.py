@@ -3,6 +3,9 @@ import shutil
 import string
 import os
 from config.colours import success, error, info, process, console
+from config.config_create.create_config_file import config_obj
+config_obj.read('config/config_files/server_config.ini')
+cert_config = config_obj["CERTIFICATE"]
 
 
 def set_server_addr(server_ip, server_port):
@@ -51,7 +54,15 @@ def make_file(implant_name):
             f.write(new_port)
             f.close()
 
-        success(f'Payload {file_name} Created at {generated}')
+        # Write FQDN to file
+        with open(generated) as f:
+            new_port = f.read().replace('localhost', cert_config['fqdn'])
+
+        with open(generated, 'w') as f:
+            f.write(new_port)
+            f.close()
+
+        success(f'Payload Created at {generated}')
         
     except FileNotFoundError:
         error(f"File Not Found: {implant_name}")
@@ -80,6 +91,14 @@ def make_exe(implant_name):
         # Write Port to file
         with open(generated) as f:
             new_port = f.read().replace('INPUT_PORT_HERE', host_port)
+
+        with open(generated, 'w') as f:
+            f.write(new_port)
+            f.close()
+            
+        # Write FQDN to file
+        with open(generated) as f:
+            new_port = f.read().replace('localhost', cert_config['fqdn'])
 
         with open(generated, 'w') as f:
             f.write(new_port)

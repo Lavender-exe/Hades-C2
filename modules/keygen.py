@@ -1,12 +1,16 @@
+import os
 from OpenSSL import crypto, SSL
 from time import gmtime, mktime
 from configparser import ConfigParser
 from rich.console import Console
+from config.config_create.create_config_file import create_config
+if not os.path.exists('config/config_files'):
+    os.mkdir("config/config_files")
 
 console = Console()
 conf_obj = ConfigParser()
-
-conf_obj.read('config/config.ini')
+create_config()
+conf_obj.read('config/config_files/server_config.ini')
 ssl_conf = conf_obj["SSL"]
 cert_conf = conf_obj["CERTIFICATE"]
 

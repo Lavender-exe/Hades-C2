@@ -13,7 +13,7 @@ def error(function):
 
 
 def info(function):
-    console.print(f"[i] {function}", style="blue_violet")
+    console.print(f"[i] {function}", style="cornflower_blue")
 
 
 def quit(function):

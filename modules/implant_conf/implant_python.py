@@ -1,5 +1,4 @@
 from modules.implant_conf.implant_gen import make_exe, make_file
-from config.colours import success, error, info, process
 
 def winpy():
     """
