@@ -22,11 +22,9 @@ Features are a work in progress currently.</p>
 
 ## About The Project
 
-![Screen Shot](https://media.discordapp.net/attachments/504609193060466694/1099041152306528266/image.png?width=748&height=621)
+![Project Banner](https://repository-images.githubusercontent.com/624929971/355d4e3d-1c4c-459e-9c62-8c8bf5f04a57)
 
 This is a project made (mostly) for me to learn Malware Development, Sockets, and C2 infrastructure setups. Currently, the server can be used for CTFs but it is still a buggy mess with a lot of things that need ironed out.
-
-I am working on a User Interface currently so new features are being put on hold until then, if you face any issues then please be sure to create an issues request.
 
 ### Features
 - [x] Windows Implant
