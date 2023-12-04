@@ -43,45 +43,6 @@ I am working on a User Interface currently so new features are being put on hold
 
 ## Getting Started
 
-### Help
-```bash
-Listener Commands
----------------------------------------------------------------------------------------
-
-listeners -g --generate           --> Generate Listener
-
-Session Commands
----------------------------------------------------------------------------------------
-
-sessions -l --list                --> List Sessions
-sessions -i --interact            --> Interact with Session
-sessions -k --kill <value>        --> Kill Active Session
-
-Payload Commands
----------------------------------------------------------------------------------------
-
-winpy                             --> Windows Python Implant
-exepy                             --> Windows Executable Implant
-linpy                             --> Linux Implant
-pshell_shell                      --> Powershell Implant
-
-Client Commands
----------------------------------------------------------------------------------------
-
-persist / pt                      --> Persist Payload (After Interacting with Session) 
-background / bg                   --> Background Session
-exit                              --> Kill Client Connection
-
-Misc Commands
----------------------------------------------------------------------------------------
-
-help / h                          --> Show Help Menu
-clear / cls                       --> Clear Screen
-update config                     --> Update Config File (WIP)
-update repo                       --> Update Program
-```
-
-
 ### Prerequisites
 
 - Python3 Pip
@@ -122,17 +83,17 @@ Contributions are what make the open source community such an amazing place to b
 
 ## Future Plans
 
-- [ ] Better Implant Functions
-- [ ] Add more persistence methods
-- [ ] Add more command functionality
-- [ ] Use Nim/C++ to create cross-platform malware
-- [ ] Add more Quality of Life features
-- [ ] User Interface
 - [x] SSL/TLS Encryption
+- [ ] Command and Session Logging
+- [ ] Client Interface 
+- [ ] Additional Communication Channels/Protocols (HTTP/TLV)
+- [ ] Exfiltration Capabilities
+- [ ] Increased Malleability
+- [ ] Multithreaded Listeners (Start for Team Server)
 
 ## License
 
-Distributed under the MIT License. See [LICENSE](https://github.com/Lavender-exe/Hades-C2/misc/LICENSE.md) for more information.
+Distributed under the GNU GPLv3. See [LICENSE](https://github.com/Lavender-exe/Hades-C2/blob/dev-broken/misc/LICENSE) for more information.
 
 ## Acknowledgements
 

@@ -152,7 +152,7 @@ def comm_handler():
             # Add to table
             if hostname is not None:
                 targets.append([remote_target,
-                                f"{hostname[0]}@{remote_ip[0]}",  # Target
+                                f"{hostname}@{remote_ip[0]}",  # Target
                                 time_record,                       # Check in
                                 username,                          # Username
                                 admin_val,                         # Check Privileges (User/Admin)
@@ -162,8 +162,8 @@ def comm_handler():
                                 ])
 
                 console.print(
-                    f'[green]\n[+] Connection Received from {hostname[0]} {remote_ip}\n'
-                    + f'[yellow]{hostname}:{remote_ip}',
+                    f'[green]\n[+] Connection Received from {hostname}:{remote_ip}\n',
+                    # + f'[yellow]{hostname}:{remote_ip}',
                     end='',
                 )
 
